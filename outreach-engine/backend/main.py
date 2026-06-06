@@ -18,7 +18,7 @@ from pydantic import BaseModel, Field
 
 from config import CORS_ORIGINS, MAX_CONCURRENT_REQUESTS
 from email_generator import generate
-from services import brevo, eazyreach, gemini, ocean, prospeo, apollo, zerobounce
+from services import brevo, gemini, apollo, prospeo, zerobounce
 
 log = logging.getLogger(__name__)
 
@@ -29,10 +29,8 @@ async def lifespan(app: FastAPI):
     # Close all async HTTP clients on shutdown
     for mod, attr in [
         (apollo,      "_apollo_client"),
-        (ocean,       "_ocean_client"),
         (prospeo,     "_prospeo_client"),
         (zerobounce,  "_zerobounce_client"),
-        (eazyreach,   "_eazyreach_client"),
         (brevo,       "_brevo_client"),
     ]:
         client = getattr(mod, attr, None)
@@ -84,9 +82,9 @@ def health():
     return {
         "ok": True,
         "mode": {
-            "company_search": "apollo (live)" if apollo.is_live() else ("ocean (live)" if ocean.is_live() else "mock"),
+            "company_search": "apollo (live)" if apollo.is_live() else "mock",
             "contact_finder": "prospeo (live)" if prospeo.is_live() else "mock",
-            "email_verify":   "zerobounce (live)" if zerobounce.is_live() else ("eazyreach (live)" if eazyreach.is_live() else "mock"),
+            "email_verify":   "zerobounce (live)" if zerobounce.is_live() else "mock",
             "email_send":     "brevo (live)" if brevo.is_live() else "mock",
             "ai_generate":    "gemini (live)" if gemini.is_live() else "mock",
         },
@@ -135,11 +133,10 @@ async def _run_pipeline(req: PipelineRequest):
 
     company_name = (req.company_name or "").strip() or _company_name_from_domain(domain)
 
-    # Step 1 – Company search: prefer Apollo, fall back to Ocean
     if apollo.is_live():
         companies = await apollo.find_similar_async(company_name, domain)
     else:
-        companies = await ocean.find_similar_async(company_name, domain)
+        raise HTTPException(status_code=503, detail="Apollo service unavailable")
 
     contacts: list[dict] = []
     emails: list[dict] = []
@@ -154,11 +151,10 @@ async def _run_pipeline(req: PipelineRequest):
 
             # Step 3 – Per-contact: email verify + AI email generation
             async def process_contact(c):
-                # Email verification: prefer ZeroBounce, fall back to EazyReach
                 if zerobounce.is_live():
                     verified = await zerobounce.verify_async(c)
                 else:
-                    verified = await eazyreach.verify_async(c)
+                    raise HTTPException(status_code=503, detail="ZeroBounce service unavailable")
 
                 contact_record = {**c, "industry": company.get("industry")}
                 content = await asyncio.to_thread(
@@ -253,7 +249,6 @@ def cache_clear():
     """Clear all LRU caches (dev utility)."""
     cleared = []
     for mod, fn_name in [
-        (ocean,   "_live_companies"),
         (prospeo, "_live_contacts"),
     ]:
         fn = getattr(mod, fn_name, None)
