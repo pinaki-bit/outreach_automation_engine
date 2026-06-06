@@ -2,13 +2,33 @@ services:
   - type: web
     name: outreach-engine-backend
     env: python
-    rootDir: backend
+    rootDir: outreach-engine/backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
+      - key: APOLLO_API_KEY
+        sync: false
+      - key: APOLLO_API_URL
+        value: "https://api.apollo.io/v1"
+      - key: PROSPEO_API_KEY
+        sync: false
+      - key: PROSPEO_API_URL
+        value: "https://api.prospeo.io"
+      - key: ZEROBOUNCE_API_KEY
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_SENDER_EMAIL
+        value: "noreply@example.com"
+      - key: BREVO_SENDER_NAME
+        value: "Outreach Engine"
+      - key: GEMINI_API_KEY
+        sync: false
       - key: CORS_ORIGINS
         value: "*"
       - key: MAX_SIMILAR
         value: "10"
       - key: MAX_CONTACTS_PER_COMPANY
         value: "5"
+      - key: HTTP_TIMEOUT
+        value: "15"
