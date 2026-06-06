@@ -78,7 +78,7 @@ export default function Loader({ onComplete }) {
 
       {/* Mid Center Section */}
       <div className="loader-mid">
-        <div className="overflow-hidden">
+        <div style={{ overflow: "hidden" }}>
           <h1 className="loader-count">
             {formatCount(count)}
           </h1>

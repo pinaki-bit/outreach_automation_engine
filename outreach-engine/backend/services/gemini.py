@@ -70,7 +70,7 @@ def generate_email(contact: dict, sender_company: str | None = None) -> dict:
     prompt = _build_prompt(contact, sender_company)
 
     response = client.models.generate_content(
-        model='gemini-3.1-flash-lite',
+        model='gemini-2.0-flash-lite',
         contents=prompt,
         config={
             'response_mime_type': 'application/json',
@@ -117,7 +117,7 @@ def generate_email_with_style(
     )
 
     response = client.models.generate_content(
-        model='gemini-3.1-flash-lite',
+        model='gemini-2.0-flash-lite',
         contents=prompt,
         config={
             'response_mime_type': 'application/json',

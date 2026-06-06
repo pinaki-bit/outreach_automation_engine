@@ -15,8 +15,8 @@ export default function CustomCursor() {
 
     if (!cursorDot || !cursorRing || !ambientLight) return;
 
-    // Hide standard cursor on desktop
-    const isTouch = window.matchMedia("(max-width: 768px)").matches;
+    // Hide standard cursor on desktop — use pointer:coarse to detect touch devices
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
     if (isTouch) {
       ambientLight.style.display = "none";
       return;

@@ -202,8 +202,11 @@ export default function App() {
 
             <div className="navbar-right">
               <div className="navbar-telemetry">
-                <span className="navbar-telemetry-dot"></span>
-                CORE ENGINE: ONLINE
+                <span
+                  className="navbar-telemetry-dot"
+                  style={{ background: telemetry ? "var(--color-gold)" : "rgba(255,255,255,0.2)", boxShadow: telemetry ? "0 0 8px var(--color-gold)" : "none" }}
+                />
+                {telemetry ? "CORE ENGINE: ONLINE" : "CONNECTING..."}
               </div>
             </div>
           </header>

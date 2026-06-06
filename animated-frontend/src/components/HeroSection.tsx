@@ -79,8 +79,8 @@ export default function HeroSection() {
             </h1>
           </div>
 
-          {/* Subtitle / Department Info under Title (Center-aligned) */}
-          <div className="absolute bottom-[28%] text-center pointer-events-none">
+          {/* Subtitle / Department Info under Title */}
+          <div className="mt-4 text-center pointer-events-none">
             <span className="font-serif text-[10px] sm:text-xs tracking-[0.4em] text-gold uppercase opacity-80">
               ANTIQUES DE L&#39;EMPIRE ROMAIN
             </span>
