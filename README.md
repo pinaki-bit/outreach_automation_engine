@@ -253,3 +253,6 @@ docker run -d \
   -e BREVO_SENDER_EMAIL=<value> \
   --name outreach-backend \
   outreach-backend:latest
+
+
+#gemini api keys are being deavtivated due to payment issue 
